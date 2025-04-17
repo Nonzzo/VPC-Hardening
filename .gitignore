@@ -1,0 +1,13 @@
+
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# Sensitive files
+*.pem
+*.key
+
+# OS and editor files
+.DS_Store
+.vscode/
