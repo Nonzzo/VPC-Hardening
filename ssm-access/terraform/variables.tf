@@ -18,7 +18,7 @@ variable "ami_owner" {
 }
 
 variable "tags" {
-  type    = map(string)
+  type = map(string)
   default = {
     Project = "VPC-Hardening"
   }
