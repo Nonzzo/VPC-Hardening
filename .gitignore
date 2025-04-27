@@ -1,13 +1,44 @@
-
-.terraform/
+# Terraform state and crash logs
 *.tfstate
 *.tfstate.*
+crash.log
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+.terraform/
 .terraform.lock.hcl
 
 # Sensitive files
 *.pem
 *.key
+*.crt
+*.env
+.env.*
 
-# OS and editor files
+# Editor & OS files
 .DS_Store
+.idea/
 .vscode/
+*.swp
+*.swo
+*.bak
+*.tmp
+README1.md
+
+
+# Log files
+*.log
+
+# Plan output
+*.plan
+
+# Mac system files
+Icon?
+._*
+
+# Node modules (if any JS tooling)
+node_modules/
+
+# Ignore backup files
+*~

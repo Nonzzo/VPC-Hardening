@@ -17,3 +17,8 @@ variable "allowed_ssh_cidr_blocks" {
   description = "List of CIDRs allowed to access SSH (bastion)"
   type        = list(string)
 }
+
+variable "name_prefix" { 
+  type = string 
+  description = "Prefix for naming security group resources" 
+}

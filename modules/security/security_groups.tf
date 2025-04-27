@@ -63,3 +63,28 @@ resource "aws_security_group" "private_sg" {
   }
 }
 
+resource "aws_security_group" "ssm" {
+  name        = "${var.name_prefix}-ssm-endpoints"
+  description = "Allow traffic to SSM endpoints"
+  vpc_id      = var.vpc_id
+
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port       = 443
+    to_port         = 443
+    protocol        = "tcp"
+    security_groups = [aws_security_group.private_sg.id] 
+  }
+
+  tags = {
+    Name = "${var.name_prefix}-ssm-sg"
+  }
+}
+
+

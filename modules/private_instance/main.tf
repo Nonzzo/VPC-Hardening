@@ -13,6 +13,7 @@ data "aws_ami" "ubuntu" {
   }
 }
 
+
 resource "aws_instance" "app" {
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = var.instance_type
@@ -20,6 +21,7 @@ resource "aws_instance" "app" {
   vpc_security_group_ids      = [var.private_sg_id]
   key_name                    = var.key_name
   associate_public_ip_address = false
+  iam_instance_profile        = var.iam_instance_profile_name # Add this line
 
   tags = {
     Name = "private-app-instance"
