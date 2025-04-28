@@ -57,17 +57,21 @@ module "vpc_endpoints" {
 }
 
 module "cloudwatch" {
-  source            = "../../modules/cloudwatch"
-  name_prefix       = var.name_prefix
-  vpc_id            = module.vpc.vpc_id
-  retention_in_days = 30
+  source             = "../../modules/cloudwatch"
+  name_prefix        = var.name_prefix
+  vpc_id             = module.vpc.vpc_id
+  retention_in_days  = 30
+  instance_id        = module.private_instance.private_instance_id
+  notification_email = "nonzo404@example.com"
+  aws_region         = "us-east-1" # replace with yours
+
 }
 
 module "cloudwatch_alarms" {
-  source       = "../../modules/cloudwatch_alarms"
-  name_prefix  = var.name_prefix
-  
-  instance_id  = module.private_instance.private_instance_id
+  source      = "../../modules/cloudwatch_alarms"
+  name_prefix = var.name_prefix
+
+  instance_id = module.private_instance.private_instance_id
 }
 
 

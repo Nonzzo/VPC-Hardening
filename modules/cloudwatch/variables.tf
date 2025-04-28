@@ -13,3 +13,19 @@ variable "retention_in_days" {
   type        = number
   default     = 30
 }
+
+variable "notification_email" {
+  description = "Email address to receive notifications"
+  type        = string
+}
+
+variable "instance_id" {
+  description = "ID of the EC2 instance to monitor"
+  type        = string
+}
+
+variable "aws_region" {
+  description = "AWS region"
+  type        = string
+}
+
