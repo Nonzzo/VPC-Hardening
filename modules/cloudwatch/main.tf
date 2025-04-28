@@ -107,3 +107,12 @@ resource "aws_ssm_association" "cloudwatch_agent_run" {
   
 }
 
+resource "aws_ssm_parameter" "cloudwatch_agent_config" {
+  name        = "AmazonCloudWatch-linux"
+  description = "CloudWatch Agent Config for Ubuntu instances"
+  type        = "String"
+  tier        = "Standard"
+  value       = file("${path.module}/cloudwatch-agent-config.json")
+}
+
+

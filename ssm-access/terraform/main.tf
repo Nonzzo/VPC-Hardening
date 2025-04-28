@@ -70,7 +70,7 @@ module "cloudwatch" {
 module "cloudwatch_alarms" {
   source      = "../../modules/cloudwatch_alarms"
   name_prefix = var.name_prefix
-
+  sns_topic_arn   = module.cloudwatch.sns_topic_arn
   instance_id = module.private_instance.private_instance_id
 }
 
