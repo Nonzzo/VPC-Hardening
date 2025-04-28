@@ -45,48 +45,51 @@ All infrastructure is modular, clear, and extensible.
 ---
 
 ## File Structure
-
 ```
-VPC-Hardening/
-├── README.md
-├── terraform/
-│   ├── main.tf
-│   ├── variables.tf
-│   └── outputs.tf
-├── modules/
-│   ├── bastion/
-│   │   ├── main.tf
-│   │   ├── variables.tf
-│   │   └── outputs.tf
-│   ├── private_instance/
-│   │   ├── main.tf
-│   │   ├── variables.tf
-│   │   └── outputs.tf
-│   ├── nat_gateway/
-│   │   ├── main.tf
-│   │   ├── variables.tf
-│   │   └── outputs.tf
-│   ├── security/
-│   │   ├── main.tf
-│   │   ├── variables.tf
-│   │   └── outputs.tf
-│   ├── vpc/
-│   │   ├── main.tf
-│   │   ├── variables.tf
-│   │   └── outputs.tf
-│   └── vpc_endpoints/
+── README.md
+├── bastion-access
+│   └── terraform
 │       ├── main.tf
-│       ├── variables.tf
-│       └── outputs.tf
-├── bastion-access/
-│   └── terraform/
-│       └── ...
-├── ssm-access/
-│   └── terraform/
-│       └── ...
-```
+│       ├── outputs.tf│       
+│       └── variables.tf
+├── modules
+│   ├── bastion
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── nat_gateway
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── private_instance
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── security
+│   │   ├── nacls.tf
+│   │   ├── outputs.tf
+│   │   ├── security_groups.tf
+│   │   └── variables.tf
+│   ├── ssm_role
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── vpc
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   └── vpc_endpoints
+│       ├── main.tf
+│       ├── outputs.tf
+│       └── variables.tf
+└── ssm-access
+    └── terraform
+        ├── main.tf
+        ├── outputs.tf        
+        └── variables.tf
 
----
+
+```
 
 ## Usage
 

@@ -17,7 +17,7 @@ module "security" {
   name_prefix             = var.vpc_name
   public_subnet_ids       = module.vpc.public_subnet_ids
   private_subnet_ids      = module.vpc.private_subnet_ids
-  allowed_ssh_cidr_blocks = ["XXX.118.XX.10/32"] # On mac/linux use 'curl ifconfig.me' to get your ip
+  allowed_ssh_cidr_blocks = ["154.118.13.10/32"] # On mac/linux use 'curl ifconfig.me' to get your ip
 }
 
 module "bastion" {
