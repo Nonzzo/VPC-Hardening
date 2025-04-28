@@ -11,3 +11,8 @@ output "vpc_id" {
 output "ssm_endpoint_id" {
   value = module.vpc_endpoints.ssm_endpoint_id
 }
+
+output "private_instance_id" {
+  description = "The ID of the private EC2 instance"
+  value       = module.private_instance.private_instance_id
+}

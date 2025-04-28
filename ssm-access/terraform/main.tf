@@ -56,3 +56,18 @@ module "vpc_endpoints" {
   security_group_id  = module.security.ssm_sg_id
 }
 
+module "cloudwatch" {
+  source            = "../../modules/cloudwatch"
+  name_prefix       = var.name_prefix
+  vpc_id            = module.vpc.vpc_id
+  retention_in_days = 30
+}
+
+module "cloudwatch_alarms" {
+  source       = "../../modules/cloudwatch_alarms"
+  name_prefix  = var.name_prefix
+  
+  instance_id  = module.private_instance.private_instance_id
+}
+
+
