@@ -62,16 +62,23 @@ module "cloudwatch" {
   vpc_id             = module.vpc.vpc_id
   retention_in_days  = 30
   instance_id        = module.private_instance.private_instance_id
-  notification_email = "nonzo404@example.com"
-  aws_region         = "us-east-1" # replace with yours
+  notification_email = "nonzo404@yahoo.com"
+  aws_region         = var.aws_region
 
 }
 
 module "cloudwatch_alarms" {
-  source      = "../../modules/cloudwatch_alarms"
-  name_prefix = var.name_prefix
-  sns_topic_arn   = module.cloudwatch.sns_topic_arn
-  instance_id = module.private_instance.private_instance_id
+  source        = "../../modules/cloudwatch_alarms"
+  name_prefix   = var.name_prefix
+  sns_topic_arn = module.cloudwatch.sns_topic_arn
+  instance_id   = module.private_instance.private_instance_id
 }
+
+module "aws_config" {
+source        = "../../modules/aws_config"
+name_prefix   = var.name_prefix
+sns_topic_arn = module.cloudwatch.sns_topic_arn
+}
+
 
 
