@@ -42,7 +42,7 @@ module "private_instance" {
   vpc_id                    = module.vpc.vpc_id
   private_subnet_id         = module.vpc.private_subnet_ids[0]
   private_sg_id             = module.security.private_sg_id
-  key_name                  = "Nonso-EC2Key" # Consider making this a variable or null
+  key_name                  = null  # you don't need key pair for ssm-access
   instance_type             = "t2.micro"
   iam_instance_profile_name = module.ssm_role.instance_profile_name
 }

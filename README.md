@@ -1,10 +1,10 @@
 # AWS VPC Hardening with Bastion Host & SSM Access (Terraform)
 
-This project provisions a secure AWS VPC using Terraform, demonstrating two secure access patterns for private EC2 instances:
+This project provisions a secure, production-ready AWS VPC using Terraform, demonstrating two secure access patterns for private EC2 instances:
 - **Bastion Host** (classic SSH jump box)
 - **AWS SSM Session Manager** (no inbound SSH required)
 
-All infrastructure is modular, clear, and extensible.
+The project is modular, extensible, and now includes advanced monitoring, compliance, and alerting features.
 
 ---
 
@@ -35,25 +35,51 @@ All infrastructure is modular, clear, and extensible.
                         ┌─────────────┴─────────────┐
                         │      SSM Access           │
                         └───────────────────────────┘
+                                      │
+                        ┌─────────────┴─────────────┐
+                        │   CloudWatch Monitoring   │
+                        └─────────────┬─────────────┘
+                                      │
+                        ┌─────────────┴─────────────┐
+                        │   AWS Config Compliance   │
+                        └───────────────────────────┘
 ```
 
 - **Bastion Host**: Only public entry point for SSH, restricted by security group.
 - **NAT Gateway**: Allows private instances to access the internet for updates, but not be accessed from the internet.
 - **Private Instances**: No public IP, only accessible via the bastion or SSM.
 - **SSM Access**: Enables secure, auditable access to private instances without opening SSH.
+- **CloudWatch**: Monitors EC2 and sends notifications via SNS.
+- **AWS Config**: Monitors compliance and configuration drift.
 
 ---
 
 ## File Structure
+
 ```
-── README.md
+VPC-Hardening/
+├── README.md
+├── .gitignore
 ├── bastion-access
 │   └── terraform
 │       ├── main.tf
 │       ├── outputs.tf│       
 │       └── variables.tf
 ├── modules
+│   ├── aws_config
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
 │   ├── bastion
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── cloudwatch
+│   │   ├── cloudwatch-agent-config.json
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── cloudwatch_alarms
 │   │   ├── main.tf
 │   │   ├── outputs.tf
 │   │   └── variables.tf
@@ -87,9 +113,9 @@ All infrastructure is modular, clear, and extensible.
         ├── main.tf
         ├── outputs.tf        
         └── variables.tf
-
-
 ```
+
+---
 
 ## Usage
 
@@ -100,10 +126,11 @@ All infrastructure is modular, clear, and extensible.
 - An existing AWS EC2 key pair (for Bastion access)
 - Your public IP address for SSH access (for Bastion access)
 - For SSM: Attach the necessary IAM permissions to your user/role and install [Session Manager Plugin](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html)
+- (Recommended) Add a `versions.tf` to pin provider versions for reproducibility
 
 ### Configuration
 
-All variables are set in [`terraform/variables.tf`](terraform/variables.tf). You can edit defaults there or override with CLI/environment variables.
+All variables are set in the respective `variables.tf` files. You can edit defaults or override with CLI/environment variables.
 
 Example:
 ```hcl
@@ -118,8 +145,19 @@ variable "vpc_name" {
 
 ### Deploy
 
+Choose your access pattern:
+
+#### Bastion Host
 ```sh
-cd terraform
+cd bastion-access/terraform
+terraform init
+terraform plan
+terraform apply
+```
+
+#### SSM Access (No SSH Key Required)
+```sh
+cd ssm-access/terraform
 terraform init
 terraform plan
 terraform apply
@@ -159,6 +197,14 @@ terraform apply
 
 ---
 
+## Monitoring & Compliance
+
+- **CloudWatch**: EC2 instance metrics, logs, and alarms. Alerts sent to your configured email via SNS.
+- **CloudWatch Alarms**: Predefined alarms for CPU, memory, and other metrics.
+- **AWS Config**: Tracks configuration changes and enforces compliance rules (e.g., S3 encryption, no public EC2 IPs, root MFA enabled).
+
+---
+
 ## Security Highlights
 
 - **Bastion Host**: Only allows SSH from your IP (edit in `main.tf`).
@@ -167,6 +213,9 @@ terraform apply
 - **Network ACLs**: Restrictive, only necessary ports open.
 - **No hardcoded secrets**: Key names only, never private keys.
 - **SSM Access**: No inbound SSH needed, all access is logged and auditable.
+- **S3 Buckets**: Block public access, versioning, and encryption enabled.
+- **IAM Roles**: Least privilege for EC2 and SSM.
+- **AWS Config Rules**: Enforce best practices and compliance.
 
 ---
 
@@ -181,16 +230,19 @@ terraform destroy
 
 ## Navigation Guide
 
-- **[terraform/](terraform/)**: Main entrypoint for deploying the full stack.
+- **[bastion-access/terraform/](bastion-access/terraform/)**: Bastion-based access deployment.
+- **[ssm-access/terraform/](ssm-access/terraform/)**: SSM-based access deployment (no SSH key required).
 - **[modules/](modules/)**: Reusable infrastructure modules:
-  - [`modules/bastion/`](modules/bastion/): Bastion host resources
-  - [`modules/private_instance/`](modules/private_instance/): Private EC2 instances
-  - [`modules/nat_gateway/`](modules/nat_gateway/): NAT Gateway setup
-  - [`modules/security/`](modules/security/): Security groups and NACLs
-  - [`modules/vpc/`](modules/vpc/): VPC and subnet definitions
-  - [`modules/vpc_endpoints/`](modules/vpc_endpoints/): VPC endpoints for SSM and other services
-- **[bastion-access/terraform/](bastion-access/terraform/)**: Example configuration for Bastion-based access
-- **[ssm-access/terraform/](ssm-access/terraform/)**: Example configuration for SSM-based access
+  - [`bastion/`](modules/bastion/): Bastion host resources
+  - [`private_instance/`](modules/private_instance/): Private EC2 instances
+  - [`nat_gateway/`](modules/nat_gateway/): NAT Gateway setup
+  - [`security/`](modules/security/): Security groups and NACLs
+  - [`ssm_role/`](modules/ssm_role/): SSM instance profile and permissions
+  - [`vpc/`](modules/vpc/): VPC and subnet definitions
+  - [`vpc_endpoints/`](modules/vpc_endpoints/): VPC endpoints for SSM and other services
+  - [`cloudwatch/`](modules/cloudwatch/): CloudWatch log group, SNS, and monitoring
+  - [`cloudwatch_alarms/`](modules/cloudwatch_alarms/): CloudWatch alarms for EC2
+  - [`aws_config/`](modules/aws_config/): AWS Config rules, recorder, and compliance
 
 ---
 
@@ -202,5 +254,14 @@ terraform destroy
 
 ---
 
+## Best Practices
+
+- **Pin provider versions** in a `versions.tf` for reproducibility.
+- **Never commit secrets** (private keys, credentials, etc).
+- **Review AWS Config and CloudWatch alarms** to ensure they meet your compliance needs.
+- **Use separate state files** for prod/staging/dev environments.
+
+---
+
 **Questions?**  
-Open an issue or check the module documentation for more details.****
+Open an issue or check the module documentation for more details.
